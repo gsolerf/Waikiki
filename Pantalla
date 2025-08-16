@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <title>Pantalla de llums</title>
+  <style>
+    body, html {
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+      display: flex; justify-content: center; align-items: center;
+      font-family: sans-serif;
+    }
+    #pantalla {
+      width: 100%; height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="pantalla"></div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <script>
+    // Config Firebase
+    const firebaseConfig = {
+      apiKey: "API_KEY",
+      authDomain: "PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://PROJECT_ID-default-rtdb.firebaseio.com",
+      projectId: "PROJECT_ID",
+      storageBucket: "PROJECT_ID.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const pantallaDiv = document.getElementById("pantalla");
+
+    // Escoltar els canvis a Firebase
+    db.ref('efecte').on('value', snapshot => {
+      const efecte = snapshot.val();
+      pantallaDiv.style.transition = "background 0.3s";
+      if (efecte === 'vermell') pantallaDiv.style.background = "red";
+      if (efecte === 'verd') pantallaDiv.style.background = "green";
+      if (efecte === 'blau') pantallaDiv.style.background = "blue";
+      if (efecte === 'arciris') {
+        pantallaDiv.style.background = "linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet)";
+        pantallaDiv.style.backgroundSize = "400% 400%";
+      }
+      if (efecte === 'flash') {
+        pantallaDiv.style.background = pantallaDiv.style.background === "white" ? "black" : "white";
+      }
+    });
+  </script>
+</body>
+</html>
