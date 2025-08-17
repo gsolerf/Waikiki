@@ -1,31 +1,69 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="ca">
 <head>
 <meta charset="UTF-8">
-<title>Control de color</title>
+<title>Pantalla Waikiki</title>
 <style>
-  body { height: 100vh; transition: background-color 0.3s; }
+    body, html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: black;
+        overflow: hidden;
+    }
+    #media {
+        max-width: 100%;
+        max-height: 100%;
+    }
 </style>
 </head>
 <body>
-<h1 id="estat">Fons blanc</h1>
+<img id="media" style="display:none;">
+<video id="video" style="display:none;" autoplay loop muted></video>
 
 <script>
-// Connecta al teu servidor Render amb WSS
 const ws = new WebSocket("wss://waikiki.onrender.com/ws");
 
-ws.onopen = () => {
-    console.log("WebSocket connectat correctament!");
-};
-
 ws.onmessage = (event) => {
-    document.body.style.backgroundColor = event.data;
-    document.getElementById("estat").textContent = "Color: " + event.data;
-};
+    const data = JSON.parse(event.data);
 
-ws.onerror = (err) => {
-    console.error("WebSocket error:", err);
+    // Color directe
+    if (data.type === "color") {
+        document.body.style.backgroundColor = data.value;
+        document.getElementById("media").style.display = "none";
+        document.getElementById("video").style.display = "none";
+    }
+
+    // Color aleatori
+    else if (data.type === "aleatori") {
+        const colors = ["#add8e6", "#ffb6c1", "#ffff99"]; // blau clar, rosa, groc
+        const randColor = colors[Math.floor(Math.random() * colors.length)];
+        document.body.style.backgroundColor = randColor;
+        document.getElementById("media").style.display = "none";
+        document.getElementById("video").style.display = "none";
+    }
+
+    // Mostrar imatge
+    else if (data.type === "imatge") {
+        const img = document.getElementById("media");
+        img.src = data.url;
+        img.style.display = "block";
+        document.getElementById("video").style.display = "none";
+        document.body.style.backgroundColor = "black";
+    }
+
+    // Mostrar vídeo
+    else if (data.type === "video") {
+        const vid = document.getElementById("video");
+        vid.src = data.url;
+        vid.style.display = "block";
+        document.getElementById("media").style.display = "none";
+        document.body.style.backgroundColor = "black";
+    }
 };
 </script>
 </body>
