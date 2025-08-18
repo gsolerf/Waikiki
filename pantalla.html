@@ -93,6 +93,13 @@ ws.onmessage = (event) => {
               vid.style.display = "none";
             break;
 
+            case "clear_text":
+                const textDiv = document.getElementById("textDisplay");
+                textDiv.innerText = "";
+                textDiv.style.backgroundColor = "transparent";
+            break;
+
+
 
             default:
                 console.warn("Tipus desconegut:", state.type);
