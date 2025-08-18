@@ -26,7 +26,7 @@
 <video id="video" style="display:none;" autoplay loop muted></video>
 
 <script>
-const ws = new WebSocket("wss://waikiki-control.onrender.com/ws/server");
+const ws = new WebSocket("wss://waikiki.onrender.com/ws/");
 
 ws.onopen = () => console.log("Pantalla connectada");
 ws.onclose = () => console.log("Pantalla desconnectada");
