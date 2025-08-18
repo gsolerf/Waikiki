@@ -31,18 +31,21 @@
 <br>
 
 <button onclick="clearText()">Borrar text</button>
+<br>
 
 <p>Estat actual: <span id="estatActual">---</span></p>
 
 <script>
 const ws = new WebSocket("wss://waikiki.onrender.com/ws");
 
-// Connectivitat
+// Mostrar connectivitat
 ws.onopen = () => console.log("Control connectat");
 ws.onclose = () => console.log("Control desconnectat");
 ws.onerror = (e) => console.error("Error control WS:", e);
 
+// Mostrar l'estat rebut del servidor
 ws.onmessage = (event) => {
+    console.log("Missatge rebut control:", event.data);
     try {
         const data = JSON.parse(event.data);
         document.getElementById("estatActual").innerText = JSON.stringify(data);
@@ -51,16 +54,18 @@ ws.onmessage = (event) => {
     }
 };
 
-// Funcions d'enviament
+// Enviar color seleccionat
 function sendColor() {
     const color = document.getElementById("colorPicker").value;
     ws.send(JSON.stringify({type:"color", value: color}));
 }
 
+// Enviar color aleatori potent (blau, rosa, groc)
 function sendAleatori() {
     ws.send(JSON.stringify({type:"aleatori"}));
 }
 
+// Enviar fitxer seleccionat (només URL local)
 function sendFile() {
     const file = document.getElementById("fileInput").files[0];
     if (!file) return;
@@ -69,12 +74,14 @@ function sendFile() {
     ws.send(JSON.stringify({type: type, value: url}));
 }
 
+// Enviar text
 function sendText() {
     const text = document.getElementById("textInput").value.trim();
-    if (!text) return;
-    ws.send(JSON.stringify({type:"text", value: text}));
+    if(!text) return;
+    ws.send(JSON.stringify({type:"text", value:text}));
 }
 
+// Borrar text
 function clearText() {
     ws.send(JSON.stringify({type:"clear_text"}));
 }
