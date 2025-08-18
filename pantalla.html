@@ -20,6 +20,8 @@
     font-size:3em;
     color:white;
     text-align:center;
+    z-index:1000;
+    pointer-events:none; /* text no interfereix amb interaccions */
   }
 </style>
 </head>
@@ -45,7 +47,7 @@ function aplicarEstat(state) {
             textDiv.innerText = "";
             break;
         case "aleatori":
-            const colors = ["#1E90FF", "#FF1493", "#FFD700"];
+            const colors = ["#1E90FF", "#FF1493", "#FFD700"]; // blau intens, rosa fort, groc potent
             const randColor = colors[Math.floor(Math.random() * colors.length)];
             document.body.style.backgroundColor = randColor;
             img.style.display = "none";
@@ -114,6 +116,3 @@ loadState();
 </script>
 </body>
 </html>
-
-
-
