@@ -1,8 +1,8 @@
 # control.py
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from shared import clients
 
 router = APIRouter()
-clients = []
 
 @router.websocket("/ws/control")
 async def websocket_control(websocket: WebSocket):
@@ -11,10 +11,9 @@ async def websocket_control(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_text()
-            # Envia dades a tots els clients excepte emissor
             for client in clients:
                 if client != websocket:
-                    await client.send_text(data)
+                    await client.send_text(f"[CONTROL] {data}")
     except WebSocketDisconnect:
         clients.remove(websocket)
 
