@@ -24,7 +24,7 @@
     pointer-events:none;
     padding: 10px 20px;
     border-radius: 10px;
-    background-color: rgba(0,0,0,0.7); /* fons semi-transparent */
+    background-color: transparent;
   }
 </style>
 </head>
@@ -54,6 +54,7 @@ ws.onmessage = (event) => {
                 img.style.display = "none";
                 vid.style.display = "none";
                 textDiv.innerText = "";
+                textDiv.style.backgroundColor = "transparent";
                 break;
 
             case "aleatori":
@@ -63,6 +64,7 @@ ws.onmessage = (event) => {
                 img.style.display = "none";
                 vid.style.display = "none";
                 textDiv.innerText = "";
+                textDiv.style.backgroundColor = "transparent";
                 break;
 
             case "imatge":
@@ -70,6 +72,7 @@ ws.onmessage = (event) => {
                 img.style.display = "block";
                 vid.style.display = "none";
                 textDiv.innerText = "";
+                textDiv.style.backgroundColor = "transparent";
                 document.body.style.backgroundColor = "black";
                 break;
 
@@ -78,23 +81,21 @@ ws.onmessage = (event) => {
                 vid.style.display = "block";
                 img.style.display = "none";
                 textDiv.innerText = "";
+                textDiv.style.backgroundColor = "transparent";
                 document.body.style.backgroundColor = "black";
                 break;
 
             case "text":
                 textDiv.innerText = state.value;
-                // Fons semi-transparent amb el color actual del body
                 const currentBg = getComputedStyle(document.body).backgroundColor;
                 if(currentBg.startsWith("rgb(")) {
-                  textDiv.style.backgroundColor = currentBg.replace("rgb(", "rgba(").replace(")", ",0.7)");
+                    textDiv.style.backgroundColor = currentBg.replace("rgb(", "rgba(").replace(")", ",0.7)");
                 } else {
-                  textDiv.style.backgroundColor = "rgba(0,0,0,0.7)";
+                    textDiv.style.backgroundColor = "rgba(0,0,0,0.7)";
                 }
                 img.style.display = "none";
                 vid.style.display = "none";
-                // No canviem el color del body!
                 break;
-
 
             default:
                 console.warn("Tipus desconegut:", state.type);
