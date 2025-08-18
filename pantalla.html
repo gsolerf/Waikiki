@@ -31,67 +31,56 @@
 <div id="textDisplay"></div>
 
 <script>
-let lastState = {type:"color", value:"black"}; // estat inicial
+const img = document.getElementById("media");
+const vid = document.getElementById("video");
+const textDiv = document.getElementById("textDisplay");
 
-function aplicarEstat(state) {
-    const img = document.getElementById("media");
-    const vid = document.getElementById("video");
-    const textDiv = document.getElementById("textDisplay");
-
-    switch(state.type) {
-        case "color":
-            document.body.style.backgroundColor = state.value;
-            img.style.display = "none";
-            vid.style.display = "none";
-            textDiv.innerText = "";
-            break;
-        case "aleatori":
-            const colors = ["#1E90FF", "#FF1493", "#FFD700"];
-            const randColor = colors[Math.floor(Math.random() * colors.length)];
-            document.body.style.backgroundColor = randColor;
-            img.style.display = "none";
-            vid.style.display = "none";
-            textDiv.innerText = "";
-            break;
-        case "imatge":
-            img.src = state.value;
-            img.style.display = "block";
-            vid.style.display = "none";
-            textDiv.innerText = "";
-            document.body.style.backgroundColor = "black";
-            break;
-        case "video":
-            vid.src = state.value;
-            vid.style.display = "block";
-            img.style.display = "none";
-            textDiv.innerText = "";
-            document.body.style.backgroundColor = "black";
-            break;
-        case "text":
-            textDiv.innerText = state.value;
-            img.style.display = "none";
-            vid.style.display = "none";
-            document.body.style.backgroundColor = "black";
-            break;
-        default:
-            console.warn("Tipus desconegut:", state.type);
-    }
-
-    lastState = state;
-}
-
-// Reaplica l'estat cada segon (per si es refresca el navegador)
-setInterval(() => aplicarEstat(lastState), 1000);
-
-// WebSocket
 const ws = new WebSocket("wss://waikiki.onrender.com/ws");
+
 ws.onopen = () => console.log("Pantalla connectada");
 ws.onclose = () => console.log("Pantalla desconnectada");
 ws.onerror = (e) => console.error("Error WS:", e);
+
 ws.onmessage = (event) => {
     try {
-        const data = JSON.parse(event.data);
-        aplicarEstat(data);
+        const state = JSON.parse(event.data);
+
+        switch(state.type) {
+            case "color":
+                document.body.style.backgroundColor = state.value;
+                img.style.display = "none";
+                vid.style.display = "none";
+                textDiv.innerText = "";
+                break;
+            case "aleatori":
+                const colors = ["#1E90FF", "#FF1493", "#FFD700"];
+                const randColor = colors[Math.floor(Math.random() * colors.length)];
+                document.body.style.backgroundColor = randColor;
+                img.style.display = "none";
+                vid.style.display = "none";
+                textDiv.innerText = "";
+                break;
+            case "imatge":
+                img.src = state.value;
+                img.style.display = "block";
+                vid.style.display = "none";
+                textDiv.innerText = "";
+                document.body.style.backgroundColor = "black";
+                break;
+            case "video":
+                vid.src = state.value;
+                vid.style.display = "block";
+                img.style.display = "none";
+                textDiv.innerText = "";
+                document.body.style.backgroundColor = "black";
+                break;
+            case "text":
+                textDiv.innerText = state.value;
+                img.style.display = "none";
+                vid.style.display = "none";
+                document.body.style.backgroundColor = "black";
+                break;
+        }
     } catch(e) {
         console.error("Error processant missatge WS:", e);
     }
