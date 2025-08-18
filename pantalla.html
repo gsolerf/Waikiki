@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ca">
 <head>
@@ -14,62 +13,107 @@
   }
   #media { max-width:100%; max-height:100%; display:none; }
   #video { max-width:100%; max-height:100%; display:none; }
+  #textDisplay {
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%, -50%);
+    font-size:3em;
+    color:white;
+    text-align:center;
+  }
 </style>
 </head>
 <body>
 <img id="media">
 <video id="video" autoplay loop muted></video>
+<div id="textDisplay"></div>
 
 <script>
 let lastState = {type:"color", value:"black"}; // estat inicial
 
-async function loadState() {
-    try {
-        const resp = await fetch("state.json"); // Fitxer JSON servit pel servidor
-        if (resp.ok) {
-            lastState = await resp.json();
-            aplicarEstat(lastState);
-        }
-    } catch(e) {
-        console.error("Error llegint state.json:", e);
-    }
-}
-
-// Funció que aplica l'estat actual a la pantalla
+// Funció que aplica l'estat actual
 function aplicarEstat(state) {
     const img = document.getElementById("media");
     const vid = document.getElementById("video");
+    const textDiv = document.getElementById("textDisplay");
 
     switch(state.type) {
         case "color":
             document.body.style.backgroundColor = state.value;
             img.style.display = "none";
             vid.style.display = "none";
+            textDiv.innerText = "";
+            break;
+        case "aleatori":
+            const colors = ["#1E90FF", "#FF1493", "#FFD700"];
+            const randColor = colors[Math.floor(Math.random() * colors.length)];
+            document.body.style.backgroundColor = randColor;
+            img.style.display = "none";
+            vid.style.display = "none";
+            textDiv.innerText = "";
             break;
         case "imatge":
             img.src = state.value;
             img.style.display = "block";
             vid.style.display = "none";
             document.body.style.backgroundColor = "black";
+            textDiv.innerText = "";
             break;
         case "video":
             vid.src = state.value;
             vid.style.display = "block";
             img.style.display = "none";
             document.body.style.backgroundColor = "black";
+            textDiv.innerText = "";
             break;
+        case "text":
+            textDiv.innerText = state.value;
+            img.style.display = "none";
+            vid.style.display = "none";
+            document.body.style.backgroundColor = "black";
+            break;
+        default:
+            console.warn("Tipus desconegut:", state.type);
     }
+
+    lastState = state; // actualitza l'últim estat
 }
 
 // Bucle que reaplica l'estat cada segon
-setInterval(() => {
-    aplicarEstat(lastState);
-}, 1000);
+setInterval(() => aplicarEstat(lastState), 1000);
+
+// Carregar estat inicial (JSON) si existeix
+async function loadState() {
+    try {
+        const resp = await fetch("state.json");
+        if (resp.ok) {
+            const data = await resp.json();
+            aplicarEstat(data);
+        }
+    } catch(e) {
+        console.warn("No s'ha pogut carregar state.json:", e);
+    }
+}
+
+// WebSocket per actualitzacions en temps real
+const ws = new WebSocket("wss://waikiki.onrender.com/ws");
+ws.onopen = () => console.log("Pantalla connectada");
+ws.onclose = () => console.log("Pantalla desconnectada");
+ws.onerror = (e) => console.error("Error WS:", e);
+ws.onmessage = (event) => {
+    try {
+        const data = JSON.parse(event.data);
+        aplicarEstat(data);
+    } catch(e) {
+        console.error("Error processant missatge WS:", e);
+    }
+};
 
 // Primer carregament
 loadState();
 </script>
 </body>
 </html>
+
 
 
