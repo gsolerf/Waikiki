@@ -26,7 +26,11 @@
 <video id="video" style="display:none;" autoplay loop muted></video>
 
 <script>
-const ws = new WebSocket("wss://waikiki.onrender.com/ws");
+const ws = new WebSocket("wss://waikiki.onrender.com/ws/server");
+
+ws.onopen = () => console.log("Pantalla connectada");
+ws.onclose = () => console.log("Pantalla desconnectada");
+ws.onerror = (e) => console.error("Error pantalla WS:", e);
 
 ws.onmessage = (event) => {
     const data = JSON.parse(event.data);
