@@ -22,6 +22,9 @@
     text-align:center;
     z-index:1000;
     pointer-events:none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0); /* s’omple dinàmicament */
   }
 </style>
 </head>
@@ -52,6 +55,7 @@ ws.onmessage = (event) => {
                 vid.style.display = "none";
                 textDiv.innerText = "";
                 break;
+
             case "aleatori":
                 const colors = ["#1E90FF", "#FF1493", "#FFD700"];
                 const randColor = colors[Math.floor(Math.random() * colors.length)];
@@ -60,6 +64,7 @@ ws.onmessage = (event) => {
                 vid.style.display = "none";
                 textDiv.innerText = "";
                 break;
+
             case "imatge":
                 img.src = state.value;
                 img.style.display = "block";
@@ -67,6 +72,7 @@ ws.onmessage = (event) => {
                 textDiv.innerText = "";
                 document.body.style.backgroundColor = "black";
                 break;
+
             case "video":
                 vid.src = state.value;
                 vid.style.display = "block";
@@ -74,12 +80,16 @@ ws.onmessage = (event) => {
                 textDiv.innerText = "";
                 document.body.style.backgroundColor = "black";
                 break;
+
             case "text":
                 textDiv.innerText = state.value;
+                textDiv.style.backgroundColor = getComputedStyle(document.body).backgroundColor;
                 img.style.display = "none";
                 vid.style.display = "none";
-                document.body.style.backgroundColor = "black";
                 break;
+
+            default:
+                console.warn("Tipus desconegut:", state.type);
         }
     } catch(e) {
         console.error("Error processant missatge WS:", e);
