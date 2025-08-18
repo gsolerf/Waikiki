@@ -122,12 +122,13 @@ function aplicarEstat(state) {
             break;
 
         case "mode5": // Degradat improvisat
+            stopMode(); // assegura que s'aturi qualsevol mode anterior
             modeInterval = setInterval(() => {
                 const c = ["#FF1493","#1E90FF","#FFD700"];
                 const c1 = c[Math.floor(Math.random()*c.length)];
                 const c2 = c[Math.floor(Math.random()*c.length)];
-                document.body.style.background = `linear-gradient(to right, ${c1}, ${c2})`;
-                document.body.style.backgroundColor = "transparent"; // assegura que backgroundColor no sobrescrigui el gradient
+                document.body.style.backgroundImage = `linear-gradient(to right, ${c1}, ${c2})`;
+                document.body.style.backgroundColor = "transparent"; // mantenim fons transparent per text
             }, 500);
             img.style.display = "none"; 
             vid.style.display = "none"; 
