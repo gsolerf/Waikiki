@@ -126,8 +126,11 @@ function aplicarEstat(state) {
                 const c1 = c[Math.floor(Math.random()*c.length)];
                 const c2 = c[Math.floor(Math.random()*c.length)];
                 document.body.style.background = `linear-gradient(to right, ${c1}, ${c2})`;
+                document.body.style.backgroundColor = "transparent"; // assegura que backgroundColor no sobrescrigui el gradient
             }, 500);
-            img.style.display = "none"; vid.style.display = "none";
+            img.style.display = "none"; 
+            vid.style.display = "none"; 
+            textDiv.innerText = "";
             break;
 
         default:
