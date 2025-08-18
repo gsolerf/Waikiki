@@ -83,17 +83,18 @@ ws.onmessage = (event) => {
 
             case "text":
                 textDiv.innerText = state.value;
-                // fons semi-transparent amb el color actual del body
-                const bgColor = getComputedStyle(document.body).backgroundColor;
-                // Convertim rgb() a rgba() amb 0.7 d’opacitat
-                if(bgColor.startsWith("rgb(")) {
-                    textDiv.style.backgroundColor = bgColor.replace("rgb(", "rgba(").replace(")", ",0.7)");
+                // Fons semi-transparent amb el color actual del body
+                const currentBg = getComputedStyle(document.body).backgroundColor;
+                if(currentBg.startsWith("rgb(")) {
+                  textDiv.style.backgroundColor = currentBg.replace("rgb(", "rgba(").replace(")", ",0.7)");
                 } else {
-                    textDiv.style.backgroundColor = "rgba(0,0,0,0.7)";
+                  textDiv.style.backgroundColor = "rgba(0,0,0,0.7)";
                 }
                 img.style.display = "none";
                 vid.style.display = "none";
+                // No canviem el color del body!
                 break;
+
 
             default:
                 console.warn("Tipus desconegut:", state.type);
