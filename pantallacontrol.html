@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <title>Control Waikiki</title>
 <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-    button { margin: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
-    input[type="color"] { margin: 10px; padding: 5px; height: 40px; width: 80px; cursor: pointer; }
+body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+button { margin: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+input[type="color"] { margin: 10px; padding: 5px; height: 40px; width: 80px; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -17,33 +17,36 @@
 <button onclick="sendColor()">Enviar color</button>
 <br>
 
-<button onclick="sendAleatori()">Color Aleatori (blau, rosa, groc)</button>
+<button onclick="sendAleatori()">Color Aleatori (rosa, blau, groc)</button>
 <br>
 
 <label>Selecciona un fitxer:</label>
 <input type="file" id="fileInput" accept="image/*,video/*" onchange="sendFile()">
 <p>Nota: Només mostra fitxers locals seleccionats</p>
 <br>
-    
+
 <label>Text per mostrar:</label>
 <input type="text" id="textInput" placeholder="Escriu text aquí">
 <button onclick="sendText()">Enviar text</button>
-<br>
-
 <button onclick="clearText()">Borrar text</button>
 <br>
+
+<label>Modes dinàmics:</label><br>
+<button onclick="sendMode('mode1')">Mode 1: Ritme del grup</button>
+<button onclick="sendMode('mode2')">Mode 2: Flash Aleatori</button>
+<button onclick="sendMode('mode3')">Mode 3: Pastel Calm</button>
+<button onclick="sendMode('mode4')">Mode 4: Rainbow Express</button>
+<button onclick="sendMode('mode5')">Mode 5: Degradat Improvitzat</button>
 
 <p>Estat actual: <span id="estatActual">---</span></p>
 
 <script>
 const ws = new WebSocket("wss://waikiki.onrender.com/ws");
 
-// Mostrar connectivitat
 ws.onopen = () => console.log("Control connectat");
 ws.onclose = () => console.log("Control desconnectat");
-ws.onerror = (e) => console.error("Error control WS:", e);
+ws.onerror = (e) => console.error("Error WS:", e);
 
-// Mostrar l'estat rebut del servidor
 ws.onmessage = (event) => {
     console.log("Missatge rebut control:", event.data);
     try {
@@ -54,18 +57,15 @@ ws.onmessage = (event) => {
     }
 };
 
-// Enviar color seleccionat
 function sendColor() {
     const color = document.getElementById("colorPicker").value;
     ws.send(JSON.stringify({type:"color", value: color}));
 }
 
-// Enviar color aleatori potent (blau, rosa, groc)
 function sendAleatori() {
     ws.send(JSON.stringify({type:"aleatori"}));
 }
 
-// Enviar fitxer seleccionat (només URL local)
 function sendFile() {
     const file = document.getElementById("fileInput").files[0];
     if (!file) return;
@@ -74,16 +74,18 @@ function sendFile() {
     ws.send(JSON.stringify({type: type, value: url}));
 }
 
-// Enviar text
 function sendText() {
     const text = document.getElementById("textInput").value.trim();
     if(!text) return;
     ws.send(JSON.stringify({type:"text", value:text}));
 }
 
-// Borrar text
 function clearText() {
     ws.send(JSON.stringify({type:"clear_text"}));
+}
+
+function sendMode(mode) {
+    ws.send(JSON.stringify({type:mode}));
 }
 </script>
 </body>
