@@ -1,7 +1,7 @@
 # app.py
 from flask import Flask
 import control
-import controlpantalla
+import server
 
 app = Flask(__name__)
 
@@ -11,8 +11,8 @@ def exec_control():
 
     return "Control executat!"
 
-@app.route('/executa/pantalla')
+@app.route('/executa/server')
 def exec_pantalla():
-    controlpantalla.main()
+    server.main()
 
     return "Pantalla executada!"
