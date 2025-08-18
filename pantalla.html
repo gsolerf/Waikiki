@@ -97,13 +97,12 @@ function aplicarEstat(state) {
             img.style.display = "none"; vid.style.display = "none";
             break;
 
-        case "mode2": // Flash aleatori
-            stopMode(); // atura qualsevol mode anterior
+        case "mode2": // Flash blanc i negre molt ràpid
             modeInterval = setInterval(() => {
-                const color = Math.random() < 0.5 ? "#FFFFFF" : "#000000";
-                document.body.style.backgroundColor = color;
-                document.body.style.backgroundImage = ""; // elimina gradients si existien
-            }, 100); // 100 ms per flash molt ràpid
+                const c = Math.random() < 0.5 ? "#FFFFFF" : "#000000";
+                document.body.style.backgroundImage = "";
+                document.body.style.backgroundColor = c;
+            }, 50); // 50 ms per flash molt intens
             img.style.display = "none";
             vid.style.display = "none";
             textDiv.innerText = "";
