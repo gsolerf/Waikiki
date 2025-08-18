@@ -12,31 +12,37 @@ input[type="color"] { margin: 10px; padding: 5px; height: 40px; width: 80px; cur
 <body>
 <h2>Control de Pantalla Waikiki</h2>
 
+<!-- Color -->
 <label>Selecciona un color:</label>
 <input type="color" id="colorPicker">
 <button onclick="sendColor()">Enviar color</button>
 <br>
 
+<!-- Color aleatori -->
 <button onclick="sendAleatori()">Color Aleatori (rosa, blau, groc)</button>
 <br>
 
+<!-- Fitxer -->
 <label>Selecciona un fitxer:</label>
 <input type="file" id="fileInput" accept="image/*,video/*" onchange="sendFile()">
 <p>Nota: Només mostra fitxers locals seleccionats</p>
 <br>
 
+<!-- Text -->
 <label>Text per mostrar:</label>
 <input type="text" id="textInput" placeholder="Escriu text aquí">
 <button onclick="sendText()">Enviar text</button>
 <button onclick="clearText()">Borrar text</button>
 <br>
 
+<!-- Modes dinàmics -->
 <label>Modes dinàmics:</label><br>
 <button onclick="sendMode('mode1')">Mode 1: Ritme del grup</button>
 <button onclick="sendMode('mode2')">Mode 2: Flash Aleatori</button>
 <button onclick="sendMode('mode3')">Mode 3: Pastel Calm</button>
 <button onclick="sendMode('mode4')">Mode 4: Rainbow Express</button>
 <button onclick="sendMode('mode5')">Mode 5: Degradat Improvitzat</button>
+<br>
 
 <p>Estat actual: <span id="estatActual">---</span></p>
 
@@ -88,5 +94,6 @@ function sendMode(mode) {
     ws.send(JSON.stringify({type:mode}));
 }
 </script>
+
 </body>
 </html>
