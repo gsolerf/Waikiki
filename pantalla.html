@@ -24,7 +24,7 @@
     pointer-events:none;
     padding: 10px 20px;
     border-radius: 10px;
-    background-color: transparent; /* fons sempre transparent */
+    background-color: transparent;
   }
 </style>
 </head>
@@ -38,60 +38,113 @@ const img = document.getElementById("media");
 const vid = document.getElementById("video");
 const textDiv = document.getElementById("textDisplay");
 
+let modeInterval = null; // interval dels modes dinàmics
+
 const ws = new WebSocket("wss://waikiki.onrender.com/ws");
 
 ws.onopen = () => console.log("Pantalla connectada");
 ws.onclose = () => console.log("Pantalla desconnectada");
 ws.onerror = (e) => console.error("Error WS:", e);
 
+function stopMode() {
+    if(modeInterval) clearInterval(modeInterval);
+    modeInterval = null;
+}
+
+function aplicarEstat(state) {
+    stopMode(); // Sempre parem qualsevol mode anterior
+    switch(state.type) {
+        case "color":
+            document.body.style.backgroundColor = state.value;
+            img.style.display = "none";
+            vid.style.display = "none";
+            textDiv.innerText = "";
+            break;
+        case "aleatori":
+            const colors = ["#FF1493","#1E90FF","#FFD700"];
+            document.body.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+            img.style.display = "none";
+            vid.style.display = "none";
+            textDiv.innerText = "";
+            break;
+        case "imatge":
+            img.src = state.value;
+            img.style.display = "block";
+            vid.style.display = "none";
+            textDiv.innerText = "";
+            document.body.style.backgroundColor = "black";
+            break;
+        case "video":
+            vid.src = state.value;
+            vid.style.display = "block";
+            img.style.display = "none";
+            textDiv.innerText = "";
+            document.body.style.backgroundColor = "black";
+            break;
+        case "text":
+            textDiv.innerText = state.value;
+            textDiv.style.backgroundColor = "transparent";
+            break;
+        case "clear_text":
+            textDiv.innerText = "";
+            break;
+        case "mode1": // Ritme del grup
+            modeInterval = setInterval(() => {
+                const colors1 = ["#FF1493","#1E90FF","#FFD700"];
+                document.body.style.backgroundColor = colors1[Math.floor(Math.random()*colors1.length)];
+            }, 300);
+            img.style.display = "none";
+            vid.style.display = "none";
+            textDiv.innerText = "";
+            break;
+        case "mode2": // Flash aleatori
+            modeInterval = setInterval(() => {
+                const colors2 = ["#FF1493","#1E90FF","#FFD700"];
+                const randomTime = Math.random()*400 + 100;
+                document.body.style.backgroundColor = colors2[Math.floor(Math.random()*colors2.length)];
+            }, 200);
+            img.style.display = "none";
+            vid.style.display = "none";
+            textDiv.innerText = "";
+            break;
+        case "mode3": // Pastel Calm
+            modeInterval = setInterval(() => {
+                const colors3 = ["#FFB6C1","#ADD8E6","#FFFF99"];
+                document.body.style.backgroundColor = colors3[Math.floor(Math.random()*colors3.length)];
+            }, 800);
+            img.style.display = "none";
+            vid.style.display = "none";
+            textDiv.innerText = "";
+            break;
+        case "mode4": // Rainbow express
+            modeInterval = setInterval(() => {
+                const colors4 = ["#FF1493","#1E90FF","#FFD700","#FF4500","#32CD32","#9400D3"];
+                document.body.style.backgroundColor = colors4[Math.floor(Math.random()*colors4.length)];
+            }, 150);
+            img.style.display = "none";
+            vid.style.display = "none";
+            textDiv.innerText = "";
+            break;
+        case "mode5": // Degradat improvitzat
+            modeInterval = setInterval(() => {
+                const colors5 = ["#FF1493","#1E90FF","#FFD700"];
+                const c1 = colors5[Math.floor(Math.random()*colors5.length)];
+                const c2 = colors5[Math.floor(Math.random()*colors5.length)];
+                document.body.style.background = `linear-gradient(to right, ${c1}, ${c2})`;
+            }, 500);
+            img.style.display = "none";
+            vid.style.display = "none";
+            textDiv.innerText = "";
+            break;
+        default:
+            console.warn("Tipus desconegut:", state.type);
+    }
+}
+
 ws.onmessage = (event) => {
     try {
         const state = JSON.parse(event.data);
-
-        switch(state.type) {
-            case "color":
-                document.body.style.backgroundColor = state.value;
-                img.style.display = "none";
-                vid.style.display = "none";
-                // El text no es toca
-                break;
-
-            case "aleatori":
-                const colors = ["#1E90FF", "#FF1493", "#FFD700"];
-                const randColor = colors[Math.floor(Math.random() * colors.length)];
-                document.body.style.backgroundColor = randColor;
-                img.style.display = "none";
-                vid.style.display = "none";
-                // El text no es toca
-                break;
-
-            case "imatge":
-                img.src = state.value;
-                img.style.display = "block";
-                vid.style.display = "none";
-                // El text no es toca
-                break;
-
-            case "video":
-                vid.src = state.value;
-                vid.style.display = "block";
-                img.style.display = "none";
-                // El text no es toca
-                break;
-
-            case "text":
-                textDiv.innerText = state.value;
-                textDiv.style.backgroundColor = "transparent"; // fons sempre transparent
-                break;
-
-            case "clear_text":
-                textDiv.innerText = "";
-                textDiv.style.backgroundColor = "transparent";
-                break;
-
-            default:
-                console.warn("Tipus desconegut:", state.type);
-        }
+        aplicarEstat(state);
     } catch(e) {
         console.error("Error processant missatge WS:", e);
     }
