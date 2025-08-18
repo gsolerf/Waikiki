@@ -24,7 +24,7 @@
     pointer-events:none;
     padding: 10px 20px;
     border-radius: 10px;
-    background-color: rgba(0,0,0,0); /* s’omple dinàmicament */
+    background-color: rgba(0,0,0,0.7); /* fons semi-transparent */
   }
 </style>
 </head>
@@ -83,7 +83,14 @@ ws.onmessage = (event) => {
 
             case "text":
                 textDiv.innerText = state.value;
-                textDiv.style.backgroundColor = getComputedStyle(document.body).backgroundColor;
+                // fons semi-transparent amb el color actual del body
+                const bgColor = getComputedStyle(document.body).backgroundColor;
+                // Convertim rgb() a rgba() amb 0.7 d’opacitat
+                if(bgColor.startsWith("rgb(")) {
+                    textDiv.style.backgroundColor = bgColor.replace("rgb(", "rgba(").replace(")", ",0.7)");
+                } else {
+                    textDiv.style.backgroundColor = "rgba(0,0,0,0.7)";
+                }
                 img.style.display = "none";
                 vid.style.display = "none";
                 break;
