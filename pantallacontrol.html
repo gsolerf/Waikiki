@@ -61,4 +61,9 @@ function sendFile() {
     const file = document.getElementById("fileInput").files[0];
     if (!file) return;
     const url = URL.createObjectURL(file);
-    const type = file.type.startsWith("video") ? "video" : "imatg
+    const type = file.type.startsWith("video") ? "video" : "imatge";
+    ws.send(JSON.stringify({type: type, url: url}));
+}
+</script>
+</body>
+</html>
