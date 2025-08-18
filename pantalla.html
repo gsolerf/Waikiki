@@ -98,11 +98,15 @@ function aplicarEstat(state) {
             break;
 
         case "mode2": // Flash aleatori
+            stopMode(); // atura qualsevol mode anterior
             modeInterval = setInterval(() => {
-                const c = ["#FF1493","#1E90FF","#FFD700"];
-                document.body.style.backgroundColor = c[Math.floor(Math.random()*c.length)];
-            }, 200);
-            img.style.display = "none"; vid.style.display = "none";
+                const color = Math.random() < 0.5 ? "#FFFFFF" : "#000000";
+                document.body.style.backgroundColor = color;
+                document.body.style.backgroundImage = ""; // elimina gradients si existien
+            }, 100); // 100 ms per flash molt ràpid
+            img.style.display = "none";
+            vid.style.display = "none";
+            textDiv.innerText = "";
             break;
 
         case "mode3": // Pastel calm
