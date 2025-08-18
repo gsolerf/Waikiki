@@ -30,6 +30,11 @@
 <button onclick="sendText()">Enviar text</button>
 <br>
 
+<button onclick="clearText()">Borrar text</button>
+
+
+
+    
 <p>Estat actual: <span id="estatActual">---</span></p>
 
 <script>
@@ -54,6 +59,10 @@ function sendText() {
     ws.send(JSON.stringify({type:"text", value:text}));
 }
 
+function clearText() {
+    ws.send(JSON.stringify({type:"clear_text"}));
+}
+    
 function sendColor() {
     const color = document.getElementById("colorPicker").value;
     ws.send(JSON.stringify({type:"color", value: color}));
