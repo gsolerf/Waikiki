@@ -32,37 +32,26 @@
 
 <button onclick="clearText()">Borrar text</button>
 
-
-
-    
 <p>Estat actual: <span id="estatActual">---</span></p>
 
 <script>
 const ws = new WebSocket("wss://waikiki.onrender.com/ws");
 
+// Connectivitat
 ws.onopen = () => console.log("Control connectat");
 ws.onclose = () => console.log("Control desconnectat");
-ws.onerror = (e) => console.error("Error WS:", e);
+ws.onerror = (e) => console.error("Error control WS:", e);
 
 ws.onmessage = (event) => {
     try {
-        const state = JSON.parse(event.data);
-        document.getElementById("estatActual").innerText = JSON.stringify(state);
+        const data = JSON.parse(event.data);
+        document.getElementById("estatActual").innerText = JSON.stringify(data);
     } catch(e) {
         console.error("Error parsejant missatge:", e);
     }
 };
 
-function sendText() {
-    const text = document.getElementById("textInput").value.trim();
-    if(!text) return;
-    ws.send(JSON.stringify({type:"text", value:text}));
-}
-
-function clearText() {
-    ws.send(JSON.stringify({type:"clear_text"}));
-}
-    
+// Funcions d'enviament
 function sendColor() {
     const color = document.getElementById("colorPicker").value;
     ws.send(JSON.stringify({type:"color", value: color}));
@@ -74,10 +63,20 @@ function sendAleatori() {
 
 function sendFile() {
     const file = document.getElementById("fileInput").files[0];
-    if(!file) return;
+    if (!file) return;
     const url = URL.createObjectURL(file);
     const type = file.type.startsWith("video") ? "video" : "imatge";
-    ws.send(JSON.stringify({type:type, value:url}));
+    ws.send(JSON.stringify({type: type, value: url}));
+}
+
+function sendText() {
+    const text = document.getElementById("textInput").value.trim();
+    if (!text) return;
+    ws.send(JSON.stringify({type:"text", value: text}));
+}
+
+function clearText() {
+    ws.send(JSON.stringify({type:"clear_text"}));
 }
 </script>
 </body>
