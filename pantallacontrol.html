@@ -29,28 +29,25 @@
 <input type="text" id="textInput" placeholder="Escriu text aquí">
 <button onclick="sendText()">Enviar text</button>
 <br>
-    
+
 <p>Estat actual: <span id="estatActual">---</span></p>
 
 <script>
 const ws = new WebSocket("wss://waikiki.onrender.com/ws");
 
-// Connectivitat
 ws.onopen = () => console.log("Control connectat");
 ws.onclose = () => console.log("Control desconnectat");
-ws.onerror = (e) => console.error("Error control WS:", e);
+ws.onerror = (e) => console.error("Error WS:", e);
 
-// Mostrar estat rebut
 ws.onmessage = (event) => {
     try {
-        const data = JSON.parse(event.data);
-        document.getElementById("estatActual").innerText = JSON.stringify(data);
+        const state = JSON.parse(event.data);
+        document.getElementById("estatActual").innerText = JSON.stringify(state);
     } catch(e) {
         console.error("Error parsejant missatge:", e);
     }
 };
 
-// Funcions enviar
 function sendText() {
     const text = document.getElementById("textInput").value.trim();
     if(!text) return;
@@ -68,10 +65,10 @@ function sendAleatori() {
 
 function sendFile() {
     const file = document.getElementById("fileInput").files[0];
-    if (!file) return;
-    const url = URL.createObjectURL(file); // URL temporal local
+    if(!file) return;
+    const url = URL.createObjectURL(file);
     const type = file.type.startsWith("video") ? "video" : "imatge";
-    ws.send(JSON.stringify({type: type, value: url}));
+    ws.send(JSON.stringify({type:type, value:url}));
 }
 </script>
 </body>
