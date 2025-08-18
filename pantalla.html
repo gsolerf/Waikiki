@@ -44,7 +44,8 @@ let modeInterval = null;
 function stopMode() {
     if(modeInterval) clearInterval(modeInterval);
     modeInterval = null;
-    document.body.style.background = ""; // treu gradients antics
+    document.body.style.backgroundImage = ""; // neteja gradients
+    document.body.style.backgroundColor = "";  // neteja color normal
 }
 
 function aplicarEstat(state) {
