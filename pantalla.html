@@ -24,7 +24,7 @@
     pointer-events:none;
     padding: 10px 20px;
     border-radius: 10px;
-    background-color: transparent;
+    background-color: transparent; /* fons sempre transparent */
   }
 </style>
 </head>
@@ -53,8 +53,7 @@ ws.onmessage = (event) => {
                 document.body.style.backgroundColor = state.value;
                 img.style.display = "none";
                 vid.style.display = "none";
-                textDiv.innerText = "";
-                textDiv.style.backgroundColor = "transparent";
+                // El text no es toca
                 break;
 
             case "aleatori":
@@ -63,43 +62,32 @@ ws.onmessage = (event) => {
                 document.body.style.backgroundColor = randColor;
                 img.style.display = "none";
                 vid.style.display = "none";
-                textDiv.innerText = "";
-                textDiv.style.backgroundColor = "transparent";
+                // El text no es toca
                 break;
 
             case "imatge":
                 img.src = state.value;
                 img.style.display = "block";
                 vid.style.display = "none";
-                textDiv.innerText = "";
-                textDiv.style.backgroundColor = "transparent";
-                document.body.style.backgroundColor = "black";
+                // El text no es toca
                 break;
 
             case "video":
                 vid.src = state.value;
                 vid.style.display = "block";
                 img.style.display = "none";
-                textDiv.innerText = "";
-                textDiv.style.backgroundColor = "transparent";
-                document.body.style.backgroundColor = "black";
+                // El text no es toca
                 break;
 
             case "text":
-              textDiv.innerText = state.value;
-              // Manté un fons semi-transparent gris o blanc depenent del que vulguis
-              textDiv.style.backgroundColor = "rgba(0,0,0,0.5)"; // gris semi-transparent
-              img.style.display = "none";
-              vid.style.display = "none";
-            break;
+                textDiv.innerText = state.value;
+                textDiv.style.backgroundColor = "transparent"; // fons sempre transparent
+                break;
 
             case "clear_text":
-              textDiv.innerText = "";
-              textDiv.style.backgroundColor = "transparent";
-            break;
-
-
-
+                textDiv.innerText = "";
+                textDiv.style.backgroundColor = "transparent";
+                break;
 
             default:
                 console.warn("Tipus desconegut:", state.type);
