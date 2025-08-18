@@ -1,10 +1,9 @@
 # server.py
-# server.py
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
+from shared import clients
 
 router = APIRouter()
-clients = []
 
 @router.get("/server")
 def server_index():
@@ -19,7 +18,7 @@ async def websocket_server(websocket: WebSocket):
             data = await websocket.receive_text()
             for client in clients:
                 if client != websocket:
-                    await client.send_text(data)
+                    await client.send_text(f"[SERVER] {data}")
     except WebSocketDisconnect:
         clients.remove(websocket)
 
