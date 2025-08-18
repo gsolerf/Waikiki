@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<title>Control Waikiki</title>
+<style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+    button { margin: 10px; padding: 10px 20px; font-size: 16px; }
+</style>
+</head>
+<body>
+<h2>Control de Pantalla Waikiki</h2>
+
+<input type="color" id="colorPicker">
+<button onclick="sendColor()">Enviar color</button>
+<br>
+<button onclick="sendAleatori()">Color Aleatori</button>
+<br>
+<input type="file" id="fileInput" accept="image/*,video/*" onchange="sendFile()">
+
+<script>
+const ws = new WebSocket("wss://waikiki.onrender.com/ws"); // canvia si cal
+
+function sendColor() {
+    const color = document.getElementById("colorPicker").value;
+    ws.send(JSON.stringify({type:"color", value: color}));
+}
+
+function sendAleatori() {
+    ws.send(JSON.stringify({type:"aleatori"}));
+}
+
+function sendFile() {
+    const file = document.getElementById("fileInput").files[0];
+    if (!file) return;
+    // Nota: aquí només enviem el nom, no el fitxer real.
+    // Si vols pujar fitxer sencer, cal backend amb upload.
+    const url = URL.createObjectURL(file);
+    const type = file.type.startsWith("video") ? "video" : "imatge";
+    ws.send(JSON.stringify({type: type, url: url}));
+}
+</script>
+</body>
+</html>
