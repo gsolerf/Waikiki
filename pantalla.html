@@ -32,12 +32,9 @@
 <video id="video" autoplay loop muted></video>
 
 <script>
-const ws = new WebSocket("wss://waikiki.onrender.com/ws");
+let lastState = {type:"color", value:"black"}; // estat inicial
 
-ws.onopen = () => console.log("Pantalla connectada");
-ws.onclose = () => console.log("Pantalla desconnectada");
-ws.onerror = (e) => console.error("Error pantalla WS:", e);
-
+// Funció que aplica l'estat actual a la pantalla
 function aplicarEstat(data) {
     const img = document.getElementById("media");
     const vid = document.getElementById("video");
@@ -74,8 +71,31 @@ function aplicarEstat(data) {
         default:
             console.warn("Tipus desconegut:", data.type);
     }
+
+    lastState = data; // actualitza l'últim estat
 }
 
+// Intentar llegir l'últim estat des del servidor JSON
+async function carregarEstatInicial() {
+    try {
+        const resp = await fetch("state.json");
+        if (resp.ok) {
+            const data = await resp.json();
+            aplicarEstat(data);
+        }
+    } catch(e) {
+        console.warn("No s'ha pogut carregar state.json:", e);
+    }
+}
+
+// Bucle que reaplica l'últim estat cada 1s
+setInterval(() => aplicarEstat(lastState), 1000);
+
+// WebSocket per rebre canvis en temps real (opcional)
+const ws = new WebSocket("wss://waikiki.onrender.com/ws");
+ws.onopen = () => console.log("Pantalla connectada");
+ws.onclose = () => console.log("Pantalla desconnectada");
+ws.onerror = (e) => console.error("Error pantalla WS:", e);
 ws.onmessage = (event) => {
     try {
         const data = JSON.parse(event.data);
@@ -84,6 +104,86 @@ ws.onmessage = (event) => {
         console.error("Error processant missatge WS:", e);
     }
 };
+
+// Primer carregament de l'estat
+carregarEstatInicial();
 </script>
 </body>
 </html>
+<!--
+
+
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<title>Pantalla Waikiki</title>
+<style>
+  body, html {
+    margin:0; padding:0;
+    width:100%; height:100%;
+    display:flex; justify-content:center; align-items:center;
+    background-color:black;
+    overflow:hidden;
+  }
+  #media { max-width:100%; max-height:100%; display:none; }
+  #video { max-width:100%; max-height:100%; display:none; }
+</style>
+</head>
+<body>
+<img id="media">
+<video id="video" autoplay loop muted></video>
+
+<script>
+let lastState = {type:"color", value:"black"}; // estat inicial
+
+async function loadState() {
+    try {
+        const resp = await fetch("state.json"); // Fitxer JSON servit pel servidor
+        if (resp.ok) {
+            lastState = await resp.json();
+            aplicarEstat(lastState);
+        }
+    } catch(e) {
+        console.error("Error llegint state.json:", e);
+    }
+}
+
+// Funció que aplica l'estat actual a la pantalla
+function aplicarEstat(state) {
+    const img = document.getElementById("media");
+    const vid = document.getElementById("video");
+
+    switch(state.type) {
+        case "color":
+            document.body.style.backgroundColor = state.value;
+            img.style.display = "none";
+            vid.style.display = "none";
+            break;
+        case "imatge":
+            img.src = state.value;
+            img.style.display = "block";
+            vid.style.display = "none";
+            document.body.style.backgroundColor = "black";
+            break;
+        case "video":
+            vid.src = state.value;
+            vid.style.display = "block";
+            img.style.display = "none";
+            document.body.style.backgroundColor = "black";
+            break;
+    }
+}
+
+// Bucle que reaplica l'estat cada segon
+setInterval(() => {
+    aplicarEstat(lastState);
+}, 1000);
+
+// Primer carregament
+loadState();
+</script>
+</body>
+</html>
+
+-->
