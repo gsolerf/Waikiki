@@ -19,7 +19,16 @@
 <input type="file" id="fileInput" accept="image/*,video/*" onchange="sendFile()">
 
 <script>
-const ws = new WebSocket("wss://waikiki.onrender.com/ws"); // canvia si cal
+const ws = new WebSocket("wss://waikiki.onrender.com/ws/control");
+
+// Opcional: mostrar connectivitat
+ws.onopen = () => console.log("Control connectat");
+ws.onclose = () => console.log("Control desconnectat");
+ws.onerror = (e) => console.error("Error control WS:", e);
+
+ws.onmessage = (event) => {
+    console.log("Missatge rebut control:", event.data);
+};
 
 function sendColor() {
     const color = document.getElementById("colorPicker").value;
