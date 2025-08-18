@@ -49,6 +49,7 @@ ws.onerror = (e) => console.error("Error WS:", e);
 function stopMode() {
     if(modeInterval) clearInterval(modeInterval);
     modeInterval = null;
+    document.body.style.background = ""; // Treu degradats anteriors
 }
 
 function aplicarEstat(state) {
@@ -59,27 +60,23 @@ function aplicarEstat(state) {
             document.body.style.backgroundColor = state.value;
             img.style.display = "none";
             vid.style.display = "none";
-            textDiv.innerText = "";
             break;
         case "aleatori":
             const colors = ["#FF1493","#1E90FF","#FFD700"];
             document.body.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
             img.style.display = "none";
             vid.style.display = "none";
-            textDiv.innerText = "";
             break;
         case "imatge":
             img.src = state.value;
             img.style.display = "block";
             vid.style.display = "none";
-            textDiv.innerText = "";
             document.body.style.backgroundColor = "black";
             break;
         case "video":
             vid.src = state.value;
             vid.style.display = "block";
             img.style.display = "none";
-            textDiv.innerText = "";
             document.body.style.backgroundColor = "black";
             break;
         case "text":
@@ -91,42 +88,42 @@ function aplicarEstat(state) {
             break;
 
         // MODES DINÀMICS
-        case "mode1":
+        case "mode1": // Ritme del grup
             modeInterval = setInterval(() => {
                 const c = ["#FF1493","#1E90FF","#FFD700"];
                 document.body.style.backgroundColor = c[Math.floor(Math.random()*c.length)];
             }, 300);
-            img.style.display = "none"; vid.style.display = "none"; textDiv.innerText = "";
+            img.style.display = "none"; vid.style.display = "none";
             break;
-        case "mode2":
+        case "mode2": // Flash aleatori
             modeInterval = setInterval(() => {
                 const c = ["#FF1493","#1E90FF","#FFD700"];
                 document.body.style.backgroundColor = c[Math.floor(Math.random()*c.length)];
-            }, 200);
-            img.style.display = "none"; vid.style.display = "none"; textDiv.innerText = "";
+            }, 150);
+            img.style.display = "none"; vid.style.display = "none";
             break;
-        case "mode3":
+        case "mode3": // Pastel calm
             modeInterval = setInterval(() => {
                 const c = ["#FFB6C1","#ADD8E6","#FFFF99"];
                 document.body.style.backgroundColor = c[Math.floor(Math.random()*c.length)];
             }, 800);
-            img.style.display = "none"; vid.style.display = "none"; textDiv.innerText = "";
+            img.style.display = "none"; vid.style.display = "none";
             break;
-        case "mode4":
+        case "mode4": // Rainbow express
             modeInterval = setInterval(() => {
                 const c = ["#FF1493","#1E90FF","#FFD700","#FF4500","#32CD32","#9400D3"];
                 document.body.style.backgroundColor = c[Math.floor(Math.random()*c.length)];
             }, 150);
-            img.style.display = "none"; vid.style.display = "none"; textDiv.innerText = "";
+            img.style.display = "none"; vid.style.display = "none";
             break;
-        case "mode5":
+        case "mode5": // Degradat improvisat
             modeInterval = setInterval(() => {
                 const c = ["#FF1493","#1E90FF","#FFD700"];
                 const c1 = c[Math.floor(Math.random()*c.length)];
                 const c2 = c[Math.floor(Math.random()*c.length)];
                 document.body.style.background = `linear-gradient(to right, ${c1}, ${c2})`;
             }, 500);
-            img.style.display = "none"; vid.style.display = "none"; textDiv.innerText = "";
+            img.style.display = "none"; vid.style.display = "none";
             break;
 
         default:
