@@ -24,6 +24,10 @@
 <input type="file" id="fileInput" accept="image/*,video/*" onchange="sendFile()">
 <p>Nota: Només mostra fitxers locals seleccionats</p>
 
+<label>Text per mostrar:</label>
+<input type="text" id="textInput" placeholder="Escriu text aquí">
+<button onclick="sendText()">Enviar text</button>
+
 <p>Estat actual: <span id="estatActual">---</span></p>
 
 <script>
@@ -44,6 +48,13 @@ ws.onmessage = (event) => {
         console.error("Error parsejant missatge:", e);
     }
 };
+
+//enviar text
+function sendText() {
+    const text = document.getElementById("textInput").value.trim();
+    if(!text) return;
+    ws.send(JSON.stringify({type:"text", value:text}));
+}    
 
 // Enviar color seleccionat
 function sendColor() {
