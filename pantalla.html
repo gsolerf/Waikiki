@@ -86,16 +86,13 @@ ws.onmessage = (event) => {
                 break;
 
             case "text":
-                textDiv.innerText = state.value;
-                const currentBg = getComputedStyle(document.body).backgroundColor;
-                if(currentBg.startsWith("rgb(")) {
-                    textDiv.style.backgroundColor = currentBg.replace("rgb(", "rgba(").replace(")", ",0.7)");
-                } else {
-                    textDiv.style.backgroundColor = "rgba(0,0,0,0.7)";
-                }
-                img.style.display = "none";
-                vid.style.display = "none";
-                break;
+              textDiv.innerText = state.value;
+              // Manté un fons semi-transparent gris o blanc depenent del que vulguis
+              textDiv.style.backgroundColor = "rgba(0,0,0,0.5)"; // gris semi-transparent
+              img.style.display = "none";
+              vid.style.display = "none";
+            break;
+
 
             default:
                 console.warn("Tipus desconegut:", state.type);
