@@ -1,16 +1,9 @@
-from flask import Flask
-import control
-import server
+# app.py
+from fastapi import FastAPI
+from control import router as control_router
+from server import router as server_router
 
-app = Flask(__name__)
+app = FastAPI()
 
-@app.route('/control')
-def executar_control():
-    return control.main()  # assumeix que tens una funció 'executar' a control.py
-
-@app.route('/pantalla')
-def executar_pantalla():
-    return server.main()  # assumeix que tens una funció 'mostrar' a server.py
-
-if __name__ == "__main__":
-    app.run()
+app.include_router(control_router)
+app.include_router(server_router)
