@@ -40,20 +40,15 @@ const textDiv = document.getElementById("textDisplay");
 
 let modeInterval = null;
 
-const ws = new WebSocket("wss://waikiki.onrender.com/ws");
-
-ws.onopen = () => console.log("Pantalla connectada");
-ws.onclose = () => console.log("Pantalla desconnectada");
-ws.onerror = (e) => console.error("Error WS:", e);
-
+// Atura qualsevol mode actiu
 function stopMode() {
     if(modeInterval) clearInterval(modeInterval);
     modeInterval = null;
-    document.body.style.background = ""; // Treu degradats antics
+    document.body.style.background = ""; // treu gradients antics
 }
 
 function aplicarEstat(state) {
-    stopMode(); // Sempre aturem intervals antics
+    stopMode(); // sempre parem intervals antics abans de qualsevol acció
 
     switch(state.type) {
         case "color":
@@ -61,28 +56,33 @@ function aplicarEstat(state) {
             img.style.display = "none";
             vid.style.display = "none";
             break;
+
         case "aleatori":
             const colors = ["#FF1493","#1E90FF","#FFD700"];
             document.body.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
             img.style.display = "none";
             vid.style.display = "none";
             break;
+
         case "imatge":
             img.src = state.value;
             img.style.display = "block";
             vid.style.display = "none";
             document.body.style.backgroundColor = "black";
             break;
+
         case "video":
             vid.src = state.value;
             vid.style.display = "block";
             img.style.display = "none";
             document.body.style.backgroundColor = "black";
             break;
+
         case "text":
             textDiv.innerText = state.value;
-            textDiv.style.backgroundColor = "transparent";
+            textDiv.style.backgroundColor = "transparent"; // sempre transparent
             break;
+
         case "clear_text":
             textDiv.innerText = "";
             break;
@@ -93,7 +93,7 @@ function aplicarEstat(state) {
                 const c = ["#FF1493","#1E90FF","#FFD700"];
                 document.body.style.backgroundColor = c[Math.floor(Math.random()*c.length)];
             }, 300);
-            img.style.display = "none"; vid.style.display = "none"; textDiv.innerText = "";
+            img.style.display = "none"; vid.style.display = "none";
             break;
 
         case "mode2": // Flash aleatori
@@ -101,7 +101,7 @@ function aplicarEstat(state) {
                 const c = ["#FF1493","#1E90FF","#FFD700"];
                 document.body.style.backgroundColor = c[Math.floor(Math.random()*c.length)];
             }, 200);
-            img.style.display = "none"; vid.style.display = "none"; textDiv.innerText = "";
+            img.style.display = "none"; vid.style.display = "none";
             break;
 
         case "mode3": // Pastel calm
@@ -109,7 +109,7 @@ function aplicarEstat(state) {
                 const c = ["#FFB6C1","#ADD8E6","#FFFF99"];
                 document.body.style.backgroundColor = c[Math.floor(Math.random()*c.length)];
             }, 800);
-            img.style.display = "none"; vid.style.display = "none"; textDiv.innerText = "";
+            img.style.display = "none"; vid.style.display = "none";
             break;
 
         case "mode4": // Rainbow express
@@ -117,7 +117,7 @@ function aplicarEstat(state) {
                 const c = ["#FF1493","#1E90FF","#FFD700","#FF4500","#32CD32","#9400D3"];
                 document.body.style.backgroundColor = c[Math.floor(Math.random()*c.length)];
             }, 150);
-            img.style.display = "none"; vid.style.display = "none"; textDiv.innerText = "";
+            img.style.display = "none"; vid.style.display = "none";
             break;
 
         case "mode5": // Degradat improvisat
@@ -127,13 +127,20 @@ function aplicarEstat(state) {
                 const c2 = c[Math.floor(Math.random()*c.length)];
                 document.body.style.background = `linear-gradient(to right, ${c1}, ${c2})`;
             }, 500);
-            img.style.display = "none"; vid.style.display = "none"; textDiv.innerText = "";
+            img.style.display = "none"; vid.style.display = "none";
             break;
 
         default:
             console.warn("Tipus desconegut:", state.type);
     }
 }
+
+// WebSocket per rebre actualitzacions en temps real
+const ws = new WebSocket("wss://waikiki.onrender.com/ws");
+
+ws.onopen = () => console.log("Pantalla connectada");
+ws.onclose = () => console.log("Pantalla desconnectada");
+ws.onerror = (e) => console.error("Error WS:", e);
 
 ws.onmessage = (event) => {
     try {
