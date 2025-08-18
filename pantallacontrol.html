@@ -7,6 +7,7 @@
     body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
     button { margin: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
     input[type="color"] { margin: 10px; padding: 5px; height: 40px; width: 80px; cursor: pointer; }
+    input[type="text"] { padding: 5px; width: 200px; font-size: 16px; }
 </style>
 </head>
 <body>
@@ -24,10 +25,12 @@
 <input type="file" id="fileInput" accept="image/*,video/*" onchange="sendFile()">
 <p>Nota: Només mostra fitxers locals seleccionats</p>
 <br>
+    
 <label>Text per mostrar:</label>
 <input type="text" id="textInput" placeholder="Escriu text aquí">
 <button onclick="sendText()">Enviar text</button>
 <br>
+    
 <p>Estat actual: <span id="estatActual">---</span></p>
 
 <script>
@@ -40,7 +43,6 @@ ws.onerror = (e) => console.error("Error control WS:", e);
 
 // Mostrar l'estat rebut del servidor
 ws.onmessage = (event) => {
-    console.log("Missatge rebut control:", event.data);
     try {
         const data = JSON.parse(event.data);
         document.getElementById("estatActual").innerText = JSON.stringify(data);
@@ -49,7 +51,7 @@ ws.onmessage = (event) => {
     }
 };
 
-//enviar text
+// Enviar text
 function sendText() {
     const text = document.getElementById("textInput").value.trim();
     if(!text) return;
@@ -73,7 +75,7 @@ function sendFile() {
     if (!file) return;
     const url = URL.createObjectURL(file);
     const type = file.type.startsWith("video") ? "video" : "imatge";
-    ws.send(JSON.stringify({type: type, url: url}));
+    ws.send(JSON.stringify({type: type, value: url})); // <- ara és value, no url
 }
 </script>
 </body>
