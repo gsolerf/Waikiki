@@ -7,7 +7,6 @@
     body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
     button { margin: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
     input[type="color"] { margin: 10px; padding: 5px; height: 40px; width: 80px; cursor: pointer; }
-    input[type="text"] { padding: 5px; width: 200px; font-size: 16px; }
 </style>
 </head>
 <body>
@@ -36,12 +35,12 @@
 <script>
 const ws = new WebSocket("wss://waikiki.onrender.com/ws");
 
-// Mostrar connectivitat
+// Connectivitat
 ws.onopen = () => console.log("Control connectat");
 ws.onclose = () => console.log("Control desconnectat");
 ws.onerror = (e) => console.error("Error control WS:", e);
 
-// Mostrar l'estat rebut del servidor
+// Mostrar estat rebut
 ws.onmessage = (event) => {
     try {
         const data = JSON.parse(event.data);
@@ -51,31 +50,28 @@ ws.onmessage = (event) => {
     }
 };
 
-// Enviar text
+// Funcions enviar
 function sendText() {
     const text = document.getElementById("textInput").value.trim();
     if(!text) return;
     ws.send(JSON.stringify({type:"text", value:text}));
-}    
+}
 
-// Enviar color seleccionat
 function sendColor() {
     const color = document.getElementById("colorPicker").value;
     ws.send(JSON.stringify({type:"color", value: color}));
 }
 
-// Enviar color aleatori potent (blau, rosa, groc)
 function sendAleatori() {
     ws.send(JSON.stringify({type:"aleatori"}));
 }
 
-// Enviar fitxer seleccionat (només URL local, no puja al servidor)
 function sendFile() {
     const file = document.getElementById("fileInput").files[0];
     if (!file) return;
-    const url = URL.createObjectURL(file);
+    const url = URL.createObjectURL(file); // URL temporal local
     const type = file.type.startsWith("video") ? "video" : "imatge";
-    ws.send(JSON.stringify({type: type, value: url})); // <- ara és value, no url
+    ws.send(JSON.stringify({type: type, value: url}));
 }
 </script>
 </body>
