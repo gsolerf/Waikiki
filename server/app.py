@@ -1,18 +1,16 @@
-# app.py
 from flask import Flask
 import control
 import server
 
 app = Flask(__name__)
 
-@app.route('/executa/control')
-def exec_control():
-    control.main()  # O qualsevol funció
+@app.route('/control')
+def executar_control():
+    return control.main()  # assumeix que tens una funció 'executar' a control.py
 
-    return "Control executat!"
+@app.route('/pantalla')
+def executar_pantalla():
+    return server.main()  # assumeix que tens una funció 'mostrar' a server.py
 
-@app.route('/executa/server')
-def exec_pantalla():
-    server.main()
-
-    return "Pantalla executada!"
+if __name__ == "__main__":
+    app.run()
