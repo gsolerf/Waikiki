@@ -1,4 +1,3 @@
-
 import json
 from fastapi import FastAPI, WebSocket
 from fastapi.responses import HTMLResponse
@@ -8,23 +7,48 @@ app = FastAPI()
 # Llista de clients connectats
 clients = []
 
+# Carreguem dades inicials des de save.json o establim valors per defecte
+try:
+    with open("save.json", "r") as f:
+        dades = json.load(f)
+except:
+    dades = {"mode": "default", "color": "white", "text": ""}
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     clients.append(websocket)
+
+    # Quan un client es connecta, li enviem l’estat actual
+    await websocket.send_text(json.dumps(dades))
+
     try:
         while True:
+            # Esperem noves dades del client
             data = await websocket.receive_text()
-            # Enviar a tots els clients connectats
+
+            # Convertim a dict (ha de venir com JSON string)
+            try:
+                noves_dades = json.loads(data)
+            except:
+                continue  # si no és JSON vàlid, l’ignorem
+
+            # Actualitzem les dades actuals
+            for clau in ["mode", "color", "text"]:
+                if clau in noves_dades:
+                    dades[clau] = noves_dades[clau]
+
+            # Guardem a save.json
+            with open("save.json", "w") as f:
+                json.dump(dades, f)
+
+            # Reenviem a tots els clients connectats
             for client in clients:
-                if client != websocket:
-                    await client.send_text(data)
+                await client.send_text(json.dumps(dades))
+
     except:
         clients.remove(websocket)
 
 @app.get("/")
 async def root():
     return {"message": "Servidor Waikiki actiu"}
-
-
-
