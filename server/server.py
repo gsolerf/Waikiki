@@ -6,6 +6,14 @@ import uvicorn
 app = FastAPI()
 clients = []
 
+try:
+    with open("save.json", "r") as f:
+        dades = json.load(f)   # Carreguem el contingut del JSON (ex: {"mode": "...", "color": "..."})
+except:
+    # Si no existeix el JSON, inicialitzem valors per defecte
+    dades = {"mode": "default", "color": "white", text: ""}
+
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
