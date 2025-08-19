@@ -73,6 +73,16 @@ function aplicarEstat(state) {
             document.body.style.backgroundColor = "black";
             break;
 
+         case "mode_imatge":
+            if (state.media) {
+                // Mostrem el GIF com a imatge animada
+                img.src = state.media;        // Assignem l'enllaç del GIF
+                img.style.display = "block";  // Mostrem la imatge
+                img.style.display = "none";   // Amaguem el video si estava actiu
+                }
+                document.body.style.backgroundColor = "black";    
+                break;
+
         case "mode_visual":
             if (state.media) {
                 // Mostrem el GIF com a imatge animada
