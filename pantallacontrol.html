@@ -73,14 +73,29 @@ function sendAleatori() {
     enviarEstat();
 }
 
-function sendFile() {
+async function sendFile() {
     const file = document.getElementById("fileInput").files[0];
     if(!file) return;
-    const url = URL.createObjectURL(file);
-    estat.mode = file.type.startsWith("video") ? "video" : "imatge";
-    estat.media = url;
-    enviarEstat();
+
+    // Creem FormData i pujem al servidor
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const res = await fetch("https://waikiki.onrender.com/upload", {
+            method: "POST",
+            body: formData
+        });
+        const data = await res.json();
+        // data.url és l’URL públic del fitxer
+        estat.mode = file.type.startsWith("video") ? "video" : "imatge";
+        estat.media = data.url; // assignem URL públic
+        enviarEstat();
+    } catch(err) {
+        console.error("Error pujant fitxer:", err);
+    }
 }
+
 
 function sendText() {
     estat.text = document.getElementById("textInput").value.trim();
