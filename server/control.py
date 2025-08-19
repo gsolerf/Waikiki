@@ -11,7 +11,7 @@ clients = []
 try:
     with open("save.json", "r") as f:
         dades = json.load(f)
-except:
+except (FileNotFoundError, json.JSONDecodeError):
     dades = {"mode": "color", "color": "black", "text": "", "media": ""}
 
 @app.websocket("/ws")
@@ -46,7 +46,7 @@ async def websocket_endpoint(websocket: WebSocket):
             for client in clients:
                 await client.send_text(json.dumps(dades))
 
-    except:
+    except WebSocketDisconnect::
         clients.remove(websocket)
 
 @app.get("/")
