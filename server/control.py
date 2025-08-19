@@ -12,7 +12,7 @@ try:
     with open("save.json", "r") as f:
         dades = json.load(f)
 except:
-    dades = {"mode": "default", "color": "white", "text": ""}
+    dades = {"mode": "color", "color": "black", "text": "", "media": ""}
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
