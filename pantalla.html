@@ -75,20 +75,21 @@ function aplicarEstat(state) {
 
         case "mode_visual":
             if (state.media) {
-            // Si l'enllaç és de Google Drive, el convertim a format de descàrrega/stream directe
-                let videoUrl = state.media;
-                if (videoUrl.includes("drive.google.com")) {
-                    const fileIdMatch = videoUrl.match(/[-\w]{25,}/);
-                    if (fileIdMatch) {
-                        videoUrl = `https://drive.google.com/uc?export=download&id=${fileIdMatch[0]}`;
-                    }
-                }    
+                // Afegim l'iframe de Drive amb /preview
+                let iframe = document.createElement("iframe");
+                // A l'URL, canvia /view per /preview per reproducció directa
+                iframe.src = state.media; // state.media ha de ser https://drive.google.com/file/d/ID/preview
+                iframe.width = "100%";
+                iframe.height = "100%";
+                iframe.style.border = "none";
+                iframe.allow = "autoplay"; // permet autoplay
 
-                vid.src = videoUrl;
-                vid.style.display = "block";
+                // Neteja la pantalla abans d'afegir
+                textDiv.innerHTML = "";
                 img.style.display = "none";
-                vid.load();
-                vid.play().catch(e => console.log("Autoplay bloquejat:", e));
+                vid.style.display = "none";
+                document.body.innerHTML = "";  
+                document.body.appendChild(iframe);
             }
             document.body.style.backgroundColor = "black";
             break;
