@@ -64,6 +64,13 @@ function aplicarEstat(state) {
             document.body.style.backgroundColor = "black";
             break;
 
+        case "mode_logo":
+            img.src = "logo.jpg";  // ruta relativa a l’arrel del repositori
+            img.style.display = "block";
+            vid.style.display = "none";
+            document.body.style.backgroundColor = "black";
+            break;
+
         case "mode1":
             modeInterval = setInterval(()=>{const c=["#FF1493","#1E90FF","#FFD700"]; document.body.style.backgroundColor = c[Math.floor(Math.random()*c.length)];},300);
             img.style.display = "none"; vid.style.display = "none";
