@@ -74,14 +74,15 @@ function aplicarEstat(state) {
             break;
 
         case "mode_visual":
-            //if (state.media) {
-            // Mostrem el GIF com a imatge animada
-            img.src = state.media;        // Assignem l'enllaç del GIF
-            img.style.display = "block";  // Mostrem la imatge
-            vid.style.display = "none";   // Amaguem el video si estava actiu
-            document.body.style.backgroundColor = "black";
-            //textDiv.innerText = "";       // Netejem text
-            //}
+            if (state.media) {
+                // Mostrem el GIF com a imatge animada
+                vid.src = state.media;        // Assignem l'enllaç del GIF
+                vid.style.display = "block";  // Mostrem la imatge
+                img.style.display = "none";   // Amaguem el video si estava actiu
+                document.body.style.backgroundColor = "black";
+                vid.load();
+                vid.play().catch(e => console.log("Autoplay bloquejat:", e));
+            }
             document.body.style.backgroundColor = "black";
             break;
 
