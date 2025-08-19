@@ -29,7 +29,7 @@ input[type="text"] { width: 200px; }
 <!-- Visuals combobox i botó Go -->
 <label>Imatge o gif:</label>
 <br>
-<select id="visualsSelect">
+<select id="imatgeSelect">
     <option value="">--Selecciona un visual--</option>
     <option value="https://github.com/gsolerf/Waikiki/raw/main/media/Jump.gif">Jump</option>
     <option value="https://github.com/gsolerf/Waikiki/raw/main/media/Logo.jpeg">Logo</option>
@@ -132,8 +132,12 @@ function clearText() {
     enviarEstat();
 }
 
-function sendMode(mode) {
-    estat.mode = mode;
+function sendMode() {
+
+    const select = document.getElementById("imatgeSelect");
+    const url = select.value;
+    if(!url) return;
+    estat.mode = "mode_imatge";
     estat.media = url;
     enviarEstat();
 }
