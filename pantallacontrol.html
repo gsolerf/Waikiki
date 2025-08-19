@@ -26,12 +26,21 @@ input[type="text"] { width: 200px; }
 <p>Només mostra fitxers locals seleccionats</p>
 <br>
 
-<button onclick="sendMode('mode_logo')">Mostrar Logo</button>
+<!-- Visuals combobox i botó Go -->
+<label>Imatge o gif:</label>
+<br>
+<select id="visualsSelect">
+    <option value="">--Selecciona un visual--</option>
+    <option value="https://github.com/gsolerf/Waikiki/raw/main/media/Jump.gif">Jump</option>
+    <option value="https://github.com/gsolerf/Waikiki/raw/main/media/Logo.jpeg">Logo</option>
+</select>
+<button onclick="sendMode('mode_logo')">Go</button>
 <br>
 <br>
 
+
 <!-- Visuals combobox i botó Go -->
-<label>Visualls:</label>
+<label>Visuals:</label>
 <br>
 <select id="visualsSelect">
     <option value="">--Selecciona un visual--</option>
@@ -125,7 +134,7 @@ function clearText() {
 
 function sendMode(mode) {
     estat.mode = mode;
-    estat.media = "";
+    estat.media = url;
     enviarEstat();
 }
 
