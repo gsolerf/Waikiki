@@ -75,24 +75,34 @@ function aplicarEstat(state) {
 
         case "mode_visual":
             if (state.media) {
-                // Afegim l'iframe de Drive amb /preview
-                let iframe = document.createElement("iframe");
-                // A l'URL, canvia /view per /preview per reproducció directa
-                iframe.src = state.media; // state.media ha de ser https://drive.google.com/file/d/ID/preview
-                iframe.width = "100%";
-                iframe.height = "100%";
-                iframe.style.border = "none";
-                iframe.allow = "autoplay"; // permet autoplay
+                // state.media ha de ser l'enllaç complet de YouTube (ex: https://www.youtube.com/watch?v=VIDEO_ID)
+                // Extraiem l'ID del vídeo
+                const videoIdMatch = state.media.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+                if(videoIdMatch && videoIdMatch[1]){
+                    const videoId = videoIdMatch[1];
 
-                // Neteja la pantalla abans d'afegir
-                textDiv.innerHTML = "";
-                img.style.display = "none";
-                vid.style.display = "none";
-                document.body.innerHTML = "";  
-                document.body.appendChild(iframe);
+                    // Creem l'iframe embed
+                    let iframe = document.createElement("iframe");
+                    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&loop=1&mute=1&playlist=${videoId}`;
+                    iframe.width = "100%";
+                    iframe.height = "100%";
+                    iframe.style.border = "none";
+                    iframe.allow = "autoplay; encrypted-media";
+                    iframe.allowFullscreen = true;
+
+                    // Neteja la pantalla abans d'afegir
+                    textDiv.innerHTML = "";
+                    img.style.display = "none";
+                    vid.style.display = "none";
+                    document.body.innerHTML = "";
+                    document.body.appendChild(iframe);
+                } else {
+                    console.warn("URL YouTube no vàlida:", state.media);
+                }
             }
             document.body.style.backgroundColor = "black";
             break;
+
 
         case "mode1":
             modeInterval = setInterval(()=>{const c=["#FF1493","#1E90FF","#FFD700"]; document.body.style.backgroundColor = c[Math.floor(Math.random()*c.length)];},300);
