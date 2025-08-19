@@ -1,16 +1,25 @@
 import json
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, HTTPException, status
+from fastapi.responses import FileResponse
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+import cloudinary
 import cloudinary.uploader
-import os,json
+import os
+import secrets
 
 app = FastAPI()
+
+# Configuració Cloudinary
 cloudinary.config(
     cloud_name=os.getenv("Cloud_name"),
     api_key=os.getenv("Api_key"),
     api_secret=os.getenv("Api_secret")
 )
 
+# Autenticació bàsica
+security = HTTPBasic()
+USERNAME = os.getenv("WAIKIKI_USER", "admin")   # usuari des de Render
+PASSWORD = os.getenv("WAIKIKI_PASS", "1234")    # contrasenya des de Render
 
 # Llista de clients connectats
 clients = []
@@ -22,41 +31,44 @@ try:
 except (FileNotFoundError, json.JSONDecodeError):
     dades = {"mode": "color", "color": "black", "text": "", "media": ""}
 
+# WebSocket
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     clients.append(websocket)
-
-    # Quan un client es connecta, li enviem l’estat actual
     await websocket.send_text(json.dumps(dades))
-
     try:
         while True:
-            # Esperem noves dades del client
             data = await websocket.receive_text()
-
-            # Convertim a dict (ha de venir com JSON string)
             try:
                 noves_dades = json.loads(data)
             except:
-                continue  # si no és JSON vàlid, l’ignorem
-
-            # Actualitzem les dades actuals
+                continue
             for clau in ["mode", "color", "text", "media"]:
                 if clau in noves_dades:
                     dades[clau] = noves_dades[clau]
-
-            # Guardem a save.json
             with open("save.json", "w") as f:
                 json.dump(dades, f)
-
-            # Reenviem a tots els clients connectats
             for client in clients:
                 await client.send_text(json.dumps(dades))
-
     except WebSocketDisconnect:
         clients.remove(websocket)
 
+# Ruta protegida per pantalla.html
 @app.get("/")
+def pantalla_html(credentials: HTTPBasicCredentials = security):
+    correct_user = secrets.compare_digest(credentials.username, USERNAME)
+    correct_pass = secrets.compare_digest(credentials.password, PASSWORD)
+    if not (correct_user and correct_pass):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Credencials incorrectes",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    # Serveix pantalla.html (posar la ruta correcta segons la teva estructura)
+    return FileResponse("pantalla.html")
+
+# Ruta de prova / estat
+@app.get("/status")
 async def root():
     return {"message": "Servidor Waikiki actiu"}
