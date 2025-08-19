@@ -4,28 +4,10 @@
 <meta charset="UTF-8">
 <title>Pantalla Waikiki</title>
 <style>
-  body, html {
-    margin:0; padding:0;
-    width:100%; height:100%;
-    display:flex; justify-content:center; align-items:center;
-    background-color:black;
-    overflow:hidden;
-  }
-  #media { max-width:100%; max-height:100%; display:none; }
-  #video { max-width:100%; max-height:100%; display:none; }
-  #textDisplay {
-    position:absolute;
-    top:50%; left:50%;
-    transform:translate(-50%, -50%);
-    font-size:3em;
-    color:white;
-    text-align:center;
-    z-index:1000;
-    pointer-events:none;
-    padding: 10px 20px;
-    border-radius: 10px;
-    background-color: transparent;
-  }
+body, html {margin:0; padding:0; width:100%; height:100%; display:flex; justify-content:center; align-items:center; background-color:black; overflow:hidden;}
+#media {max-width:100%; max-height:100%; display:none;}
+#video {max-width:100%; max-height:100%; display:none;}
+#textDisplay {position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:3em; color:white; text-align:center; z-index:1000; pointer-events:none; padding:10px 20px; border-radius:10px; background-color:transparent;}
 </style>
 </head>
 <body>
@@ -40,123 +22,94 @@ const textDiv = document.getElementById("textDisplay");
 
 let modeInterval = null;
 
-// Atura qualsevol mode actiu
 function stopMode() {
     if(modeInterval) clearInterval(modeInterval);
     modeInterval = null;
-    document.body.style.backgroundImage = ""; // neteja gradients
-    document.body.style.backgroundColor = "";  // neteja color normal
+    document.body.style.backgroundImage = "";
+    document.body.style.backgroundColor = "black";
 }
 
+// Mostra el text sempre que hi hagi contingut
+function aplicarText(text) {
+    textDiv.innerText = text && text.trim() !== "" ? text : "";
+}
+
+// Aplica l’estat rebut
 function aplicarEstat(state) {
-    stopMode(); // sempre parem intervals antics abans de qualsevol acció
+    stopMode();
+    aplicarText(state.text);
 
-    switch(state.type) {
+    switch(state.mode) {
         case "color":
-            document.body.style.backgroundColor = state.value;
-            img.style.display = "none";
-            vid.style.display = "none";
-            break;
-
-        case "aleatori":
-            const colors = ["#FF1493","#1E90FF","#FFD700"];
-            document.body.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+            document.body.style.backgroundColor = state.color || "black";
             img.style.display = "none";
             vid.style.display = "none";
             break;
 
         case "imatge":
-            img.src = state.value;
-            img.style.display = "block";
-            vid.style.display = "none";
+            if(state.media) {
+                img.src = state.media;
+                img.style.display = "block";
+                vid.style.display = "none";
+            }
             document.body.style.backgroundColor = "black";
             break;
 
         case "video":
-            vid.src = state.value;
-            vid.style.display = "block";
-            img.style.display = "none";
+            if(state.media) {
+                vid.src = state.media;
+                vid.style.display = "block";
+                img.style.display = "none";
+            }
             document.body.style.backgroundColor = "black";
             break;
 
-        case "text":
-            textDiv.innerText = state.value;
-            textDiv.style.backgroundColor = "transparent"; // sempre transparent
-            break;
-
-        case "clear_text":
-            textDiv.innerText = "";
-            break;
-
-        // MODES DINÀMICS
-        case "mode1": // Ritme del grup
-            modeInterval = setInterval(() => {
-                const c = ["#FF1493","#1E90FF","#FFD700"];
-                document.body.style.backgroundColor = c[Math.floor(Math.random()*c.length)];
-            }, 300);
+        case "mode1":
+            modeInterval = setInterval(()=>{const c=["#FF1493","#1E90FF","#FFD700"]; document.body.style.backgroundColor = c[Math.floor(Math.random()*c.length)];},300);
             img.style.display = "none"; vid.style.display = "none";
             break;
 
-        case "mode2": // Flash blanc i negre molt ràpid
-            modeInterval = setInterval(() => {
-                const c = Math.random() < 0.5 ? "#FFFFFF" : "#000000";
-                document.body.style.backgroundImage = "";
-                document.body.style.backgroundColor = c;
-            }, 50); // 50 ms per flash molt intens
-            img.style.display = "none";
-            vid.style.display = "none";
-            textDiv.innerText = "";
-            break;
-
-        case "mode3": // Pastel calm
-            modeInterval = setInterval(() => {
-                const c = ["#FFB6C1","#ADD8E6","#FFFF99"];
-                document.body.style.backgroundColor = c[Math.floor(Math.random()*c.length)];
-            }, 800);
+        case "mode2":
+            modeInterval = setInterval(()=>{document.body.style.backgroundColor = Math.random()<0.5?"#FFFFFF":"#000000";},50);
             img.style.display = "none"; vid.style.display = "none";
             break;
 
-        case "mode4": // Rainbow express
-            modeInterval = setInterval(() => {
-                const c = ["#FF1493","#1E90FF","#FFD700","#FF4500","#32CD32","#9400D3"];
-                document.body.style.backgroundColor = c[Math.floor(Math.random()*c.length)];
-            }, 150);
+        case "mode3":
+            modeInterval = setInterval(()=>{const c=["#FFB6C1","#ADD8E6","#FFFF99"]; document.body.style.backgroundColor = c[Math.floor(Math.random()*c.length)];},800);
             img.style.display = "none"; vid.style.display = "none";
             break;
 
-        case "mode5": // Degradat improvisat
-            stopMode(); // assegura que s'aturi qualsevol mode anterior
-            modeInterval = setInterval(() => {
-                const c = ["#FF1493","#1E90FF","#FFD700"];
-                const c1 = c[Math.floor(Math.random()*c.length)];
-                const c2 = c[Math.floor(Math.random()*c.length)];
-                document.body.style.backgroundImage = `linear-gradient(to right, ${c1}, ${c2})`;
-                document.body.style.backgroundColor = "transparent"; // mantenim fons transparent per text
-            }, 500);
-            img.style.display = "none"; 
-            vid.style.display = "none"; 
-            textDiv.innerText = "";
+        case "mode4":
+            modeInterval = setInterval(()=>{const c=["#FF1493","#1E90FF","#FFD700","#FF4500","#32CD32","#9400D3"]; document.body.style.backgroundColor = c[Math.floor(Math.random()*c.length)];},150);
+            img.style.display = "none"; vid.style.display = "none";
+            break;
+
+        case "mode5":
+            modeInterval = setInterval(()=>{
+                const c=["#FF1493","#1E90FF","#FFD700"];
+                const c1=c[Math.floor(Math.random()*c.length)];
+                const c2=c[Math.floor(Math.random()*c.length)];
+                document.body.style.backgroundImage=`linear-gradient(to right, ${c1}, ${c2})`;
+            },500);
+            img.style.display = "none"; vid.style.display = "none";
             break;
 
         default:
-            console.warn("Tipus desconegut:", state.type);
+            console.warn("Mode desconegut:", state.mode);
     }
 }
 
-// WebSocket per rebre actualitzacions en temps real
+// WebSocket
 const ws = new WebSocket("wss://waikiki.onrender.com/ws");
+ws.onopen = ()=>console.log("Pantalla connectada");
+ws.onclose = ()=>console.log("Pantalla desconnectada");
+ws.onerror = (e)=>console.error("Error WS:",e);
 
-ws.onopen = () => console.log("Pantalla connectada");
-ws.onclose = () => console.log("Pantalla desconnectada");
-ws.onerror = (e) => console.error("Error WS:", e);
-
-ws.onmessage = (event) => {
+ws.onmessage = (event)=>{
     try {
         const state = JSON.parse(event.data);
         aplicarEstat(state);
-    } catch(e) {
-        console.error("Error processant missatge WS:", e);
-    }
+    } catch(e) { console.error("Error processant missatge WS:",e); }
 };
 </script>
 </body>
