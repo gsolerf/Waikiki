@@ -34,7 +34,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 continue  # si no és JSON vàlid, l’ignorem
 
             # Actualitzem les dades actuals
-            for clau in ["mode", "color", "text"]:
+            for clau in ["mode", "color", "text", "media"]:
                 if clau in noves_dades:
                     dades[clau] = noves_dades[clau]
 
