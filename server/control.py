@@ -1,8 +1,16 @@
 import json
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
+import cloudinary.uploader
+import os,json
 
 app = FastAPI()
+cloudinary.config(
+    cloud_name=os.getenv("Cloud_name"),
+    api_key=os.getenv("Api_key"),
+    api_secret=os.getenv("Api_secret")
+)
+
 
 # Llista de clients connectats
 clients = []
