@@ -6,7 +6,7 @@
 <style>
 body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
 button { margin: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
-input[type="color"], input[type="text"] { margin: 10px; padding: 5px; height: 40px; cursor: pointer; }
+input[type="color"], input[type="text"], select { margin: 10px; padding: 5px; height: 40px; cursor: pointer; }
 input[type="text"] { width: 200px; }
 </style>
 </head>
@@ -27,6 +27,16 @@ input[type="text"] { width: 200px; }
 <br>
 
 <button onclick="sendMode('mode_logo')">Mostrar Logo</button>
+<br>
+
+<!-- Visuals combobox i botó Go -->
+<label>Visuals:</label>
+<select id="visualsSelect">
+    <option value="">--Selecciona un visual--</option>
+    <option value="https://drive.google.com/uc?export=download&id=ID_VIDEO1">Video 1</option>
+    <option value="https://drive.google.com/uc?export=download&id=ID_VIDEO2">Video 2</option>
+</select>
+<button onclick="goVisual()">Go</button>
 <br>
 
 <label>Text per mostrar:</label>
@@ -69,7 +79,7 @@ function sendColor() {
 }
 
 function sendAleatori() {
-    estat.mode = "color"; // tractarem color aleatori com a mode color amb valor aleatori
+    estat.mode = "color";
     const colors = ["#FF1493","#1E90FF","#FFD700"];
     estat.color = colors[Math.floor(Math.random()*colors.length)];
     estat.media = "";
@@ -80,7 +90,6 @@ async function sendFile() {
     const file = document.getElementById("fileInput").files[0];
     if(!file) return;
 
-    // Creem FormData i pujem al servidor
     const formData = new FormData();
     formData.append("file", file);
 
@@ -90,15 +99,13 @@ async function sendFile() {
             body: formData
         });
         const data = await res.json();
-        // data.url és l’URL públic del fitxer
         estat.mode = file.type.startsWith("video") ? "video" : "imatge";
-        estat.media = data.url; // assignem URL públic
+        estat.media = data.url;
         enviarEstat();
     } catch(err) {
         console.error("Error pujant fitxer:", err);
     }
 }
-
 
 function sendText() {
     estat.text = document.getElementById("textInput").value.trim();
@@ -113,6 +120,17 @@ function clearText() {
 function sendMode(mode) {
     estat.mode = mode;
     estat.media = "";
+    enviarEstat();
+}
+
+// Funció Go per a visuals
+function goVisual() {
+    const select = document.getElementById("visualsSelect");
+    const url = select.value;
+    if(!url) return;
+
+    estat.mode = "mode_visual";
+    estat.media = url;
     enviarEstat();
 }
 </script>
