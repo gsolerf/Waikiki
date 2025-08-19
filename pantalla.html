@@ -74,13 +74,19 @@ function aplicarEstat(state) {
             break;
 
         case "mode_visual":
-            //textDiv.innerText = state.media;
+            textDiv.innerText = state.media;
             if (state.media) {
-                vid.src = state.media;
-                vid.style.display = "block";
-                img.style.display = "none";
-                vid.load();
-                vid.play().catch(e => console.log("Autoplay bloquejat:", e));
+                // Afegim l'iframe amb l'enllaç
+                let iframe = document.createElement("iframe");
+                iframe.src = state.media;
+                iframe.width = "100%";
+                iframe.height = "100%";
+                iframe.style.border = "none";
+
+                // Neteja la pantalla abans d'afegir-lo
+                textDiv.innerHTML = "";
+                document.body.innerHTML = "";  
+                document.body.appendChild(iframe);
             }
             document.body.style.backgroundColor = "black";
             break;
