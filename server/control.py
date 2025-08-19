@@ -46,7 +46,7 @@ async def websocket_endpoint(websocket: WebSocket):
             for client in clients:
                 await client.send_text(json.dumps(dades))
 
-    except WebSocketDisconnect::
+    except WebSocketDisconnect:
         clients.remove(websocket)
 
 @app.get("/")
