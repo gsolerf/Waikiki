@@ -1,26 +1,39 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-import uvicorn
-import json
+from fastapi import FastAPI, WebSocket, UploadFile, File
+from fastapi.staticfiles import StaticFiles
+import json, shutil, os
 
 app = FastAPI()
 clients = []
+
+# Directori on guardarem fitxers pujat
+MEDIA_DIR = "media"
+os.makedirs(MEDIA_DIR, exist_ok=True)
+
+# Servim els fitxers del directori media públicament
+app.mount("/media", StaticFiles(directory=MEDIA_DIR), name="media")
 
 # Carreguem dades inicials o posem per defecte
 try:
     with open("save.json", "r") as f:
         dades = json.load(f)
-except (FileNotFoundError, json.JSONDecodeError):
+except:
     dades = {"mode": "color", "color": "black", "text": "", "media": ""}
 
+# Endpoint per pujar fitxers
+@app.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    path = os.path.join(MEDIA_DIR, file.filename)
+    with open(path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+    # Retornem l'URL públic del fitxer
+    return {"url": f"/media/{file.filename}"}
 
+# WebSocket
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     clients.append(websocket)
-
-    # Enviem estat inicial al client que es connecta
     await websocket.send_text(json.dumps(dades))
-
     try:
         while True:
             data = await websocket.receive_text()
@@ -28,23 +41,12 @@ async def websocket_endpoint(websocket: WebSocket):
                 noves_dades = json.loads(data)
             except:
                 continue
-
-            # Actualitzem només les claus que tenim definides
             for clau in ["mode", "color", "text", "media"]:
                 if clau in noves_dades:
                     dades[clau] = noves_dades[clau]
-
-            # Guardem sempre al JSON
             with open("save.json", "w") as f:
                 json.dump(dades, f)
-
-            # Reenviem a tots els clients
             for client in clients:
                 await client.send_text(json.dumps(dades))
-
-    except WebSocketDisconnect:
+    except:
         clients.remove(websocket)
-
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
